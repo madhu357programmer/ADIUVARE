@@ -414,3 +414,20 @@ async def test_setup_wizard_uses_selects_and_writes_full_config(tmp_path):
     assert "thresholds:" in saved
     assert "framework: fastapi" in saved
     assert "mode: assist" in saved
+
+
+from unittest.mock import MagicMock, patch
+
+def test_disconnected_action_notice_sets_footer_status():
+    with patch("adiuvare.tui.app.AuditLog"):
+        from adiuvare.tui.app import AdiuvareApp
+
+        app = AdiuvareApp()
+
+        app.connected = False
+        app.set_footer_status = MagicMock()
+
+        result = app.disconnected_action_notice("ban_ip")
+
+        assert result is True
+        app.set_footer_status.assert_called_once()
